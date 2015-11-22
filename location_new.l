@@ -41,7 +41,7 @@ int carryChainNum = 0;
 						break;	
 						}
 					}
-
+				///// test test test
 					//fprintf(loCon,"set_location_assignment %s -to \"PATH%dNODE%d\"\n",yytext,path,node);
 					fprintf(loCon,"set_location_assignment ");
 
