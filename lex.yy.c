@@ -813,7 +813,7 @@ YY_RULE_SETUP
 						break;	
 						}
 					}
-
+				///// test test test
 					//fprintf(loCon,"set_location_assignment %s -to \"PATH%dNODE%d\"\n",yytext,path,node);
 					fprintf(loCon,"set_location_assignment ");
 
@@ -1003,7 +1003,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 230 "location_new.l"
-{fprintf(loCon,"\n\n\n\n");path++; carryChainNum = 0;
+{fprintf(loCon,"PATH%d\n",path+1);path++; carryChainNum = 0;
 			free(testVec);
 			testVec = (char *)malloc(sizeof(char));
 			fprintf(veri,"//////////////////////////////////////////////////****************************************PATH%d*****************************************//////////////\n",path);

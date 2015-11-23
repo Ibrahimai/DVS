@@ -227,7 +227,7 @@ int carryChainNum = 0;
 					done1 : node++; 
 
 }
-"Path #" {fprintf(loCon,"\n\n\n\n");path++; carryChainNum = 0;
+"Path #" {fprintf(loCon,"PATH%d\n",path+1);path++; carryChainNum = 0;
 			free(testVec);
 			testVec = (char *)malloc(sizeof(char));
 			fprintf(veri,"//////////////////////////////////////////////////****************************************PATH%d*****************************************//////////////\n",path);
