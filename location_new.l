@@ -17,6 +17,7 @@ FILE *loCon;
 FILE *roCon;
 FILE *veri;
 FILE *auxil;
+FILE *meta;
 int i =0;
 int routingBefore = 0;
 int port = 999;
@@ -44,31 +45,34 @@ int carryChainNum = 0;
 				///// test test test
 					//fprintf(loCon,"set_location_assignment %s -to \"PATH%dNODE%d\"\n",yytext,path,node);
 					fprintf(loCon,"set_location_assignment ");
+					fprintf(meta,"set_location_assignment ");
 
 					for (i=index;i<strlen(yytext);i++)
 					{
 							if (yytext[i]==' ')
 								break;
 						fprintf (loCon,"%c",yytext[i]);
+						fprintf (meta,"%c",yytext[i]);
 						
 
 					}
 					fprintf (loCon," -to \"PATH%dNODE%d\"\n", path,node);
+					fprintf (meta," -to \"PATH%dNODE%d\"\n", path,node);
 					//printf (" -to \"PATH%dNODE%d\"\n", path,node); //debug
 					if (yytext[index]=='F')
 					{
 						if (node > 0)
 						{
 							fprintf(veri,"dffeas PATH%dNODE%d_t (\n\t.clk(CLK),\n\t.d(PATH%dNODE%d),\n\t.q(PATH%dNODE%d));\ndefparam PATH%dNODE%d_t .power_up = \"low\";\ndefparam PATH%dNODE%d_t .is_wysiwyg = \"true\";\n\n",path,node,path,node-1,path,node,path,node,path,node);
-											
+						
 						}						
 						else
 						{
 							fprintf(veri,"dffeas PATH%dNODE%d_t (\n\t.clk(CLK),\n\t.d(xin),\n\t.q(PATH%dNODE%d));\ndefparam PATH%dNODE%d_t .power_up = \"low\";\ndefparam PATH%dNODE%d_t .is_wysiwyg = \"true\";\n\n",path,node,path,node,path,node,path,node);	
 											
-
 						}
-					goto done1;
+						fprintf(meta,"FF d q\n");
+						goto done1;
 					}
 
 
@@ -85,7 +89,7 @@ int carryChainNum = 0;
 						portOut = Cout;
 		
 							
-		
+					fprintf(meta,"LUT %d %d\n", port, portOut);
 					if (port < Cin)
 					{
 
@@ -123,6 +127,7 @@ int carryChainNum = 0;
 								testVec[testVectorIndex-1] = '0';
 							else
 								testVec[testVectorIndex-1] = '1';
+							
 							
 							
 							fprintf(veri,".combout(PATH%dNODE%d));\n",path,node);
@@ -227,9 +232,11 @@ int carryChainNum = 0;
 					done1 : node++; 
 
 }
-"Path #" {fprintf(loCon,"PATH%d\n",path+1);path++; carryChainNum = 0;
-			free(testVec);
-			testVec = (char *)malloc(sizeof(char));
+"Path #" {	fprintf(loCon,"PATH%d\n",path+1);
+			fprintf(meta,"PATH%d\n",path+1);
+			path++; carryChainNum = 0;
+		//	free(testVec);
+		//	testVec = (char *)malloc(sizeof(char));
 			fprintf(veri,"//////////////////////////////////////////////////****************************************PATH%d*****************************************//////////////\n",path);
 			//printf("//////////////////////////////////////////////////****************************************PATH%d*****************************************//////////////\n",path);
 			
@@ -244,6 +251,7 @@ int carryChainNum = 0;
 				
 				if (testVectorIndex>0)
 				{
+
 					fprintf(auxil,"wire [%d:0] testVector%d /*synthesis keep*/ ; \n",testVectorIndex-1,path-1);
 					fprintf(auxil,"assign testVector%d = %d\'b",path-1,testVectorIndex);
 					for (i=0;i<testVectorIndex;i++)
@@ -255,7 +263,8 @@ int carryChainNum = 0;
 				}
 				//printf("%d\n",node);
 			}
-
+		free(testVec);
+		testVec = (char *)malloc(sizeof(char));
 		node=0;
 		testVectorIndex = 0;
 
@@ -378,6 +387,7 @@ loCon = fopen("../fils/locationConstraint", "w");
 roCon = fopen("../fils/routingConstraint", "w");
 veri = fopen("../fils/verilo", "w");
 auxil = fopen("../fils/auxill", "w");
+meta = fopen("../fils/meta", "w");
   yylex();
 
 				fprintf(auxil,"reg PATH%dNODE%d, PATH%dNODE%d /* synthesis noprune*/;\nwire ",path,0,path,node-1);

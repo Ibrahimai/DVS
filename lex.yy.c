@@ -523,6 +523,7 @@ FILE *loCon;
 FILE *roCon;
 FILE *veri;
 FILE *auxil;
+FILE *meta;
 int i =0;
 int routingBefore = 0;
 int port = 999;
@@ -531,7 +532,7 @@ int currentMode = normal;
 int testVectorIndex = 0;
 char *testVec;
 int carryChainNum = 0;
-#line 535 "lex.yy.c"
+#line 536 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -740,9 +741,9 @@ YY_DECL
 		}
 
 	{
-#line 33 "location_new.l"
+#line 34 "location_new.l"
 
-#line 746 "lex.yy.c"
+#line 747 "lex.yy.c"
 
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
@@ -802,7 +803,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 34 "location_new.l"
+#line 35 "location_new.l"
 {FLAG =1;startRoute=1;
 					int index = 0;
 					for (i=13;i<strlen(yytext);i++)
@@ -816,31 +817,34 @@ YY_RULE_SETUP
 				///// test test test
 					//fprintf(loCon,"set_location_assignment %s -to \"PATH%dNODE%d\"\n",yytext,path,node);
 					fprintf(loCon,"set_location_assignment ");
+					fprintf(meta,"set_location_assignment ");
 
 					for (i=index;i<strlen(yytext);i++)
 					{
 							if (yytext[i]==' ')
 								break;
 						fprintf (loCon,"%c",yytext[i]);
+						fprintf (meta,"%c",yytext[i]);
 						
 
 					}
 					fprintf (loCon," -to \"PATH%dNODE%d\"\n", path,node);
+					fprintf (meta," -to \"PATH%dNODE%d\"\n", path,node);
 					//printf (" -to \"PATH%dNODE%d\"\n", path,node); //debug
 					if (yytext[index]=='F')
 					{
 						if (node > 0)
 						{
 							fprintf(veri,"dffeas PATH%dNODE%d_t (\n\t.clk(CLK),\n\t.d(PATH%dNODE%d),\n\t.q(PATH%dNODE%d));\ndefparam PATH%dNODE%d_t .power_up = \"low\";\ndefparam PATH%dNODE%d_t .is_wysiwyg = \"true\";\n\n",path,node,path,node-1,path,node,path,node,path,node);
-											
+						
 						}						
 						else
 						{
 							fprintf(veri,"dffeas PATH%dNODE%d_t (\n\t.clk(CLK),\n\t.d(xin),\n\t.q(PATH%dNODE%d));\ndefparam PATH%dNODE%d_t .power_up = \"low\";\ndefparam PATH%dNODE%d_t .is_wysiwyg = \"true\";\n\n",path,node,path,node,path,node,path,node);	
 											
-
 						}
-					goto done1;
+						fprintf(meta,"FF d q\n");
+						goto done1;
 					}
 
 
@@ -857,7 +861,7 @@ YY_RULE_SETUP
 						portOut = Cout;
 		
 							
-		
+					fprintf(meta,"LUT %d %d\n", port, portOut);
 					if (port < Cin)
 					{
 
@@ -895,6 +899,7 @@ YY_RULE_SETUP
 								testVec[testVectorIndex-1] = '0';
 							else
 								testVec[testVectorIndex-1] = '1';
+							
 							
 							
 							fprintf(veri,".combout(PATH%dNODE%d));\n",path,node);
@@ -1002,10 +1007,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 230 "location_new.l"
-{fprintf(loCon,"PATH%d\n",path+1);path++; carryChainNum = 0;
-			free(testVec);
-			testVec = (char *)malloc(sizeof(char));
+#line 235 "location_new.l"
+{	fprintf(loCon,"PATH%d\n",path+1);
+			fprintf(meta,"PATH%d\n",path+1);
+			path++; carryChainNum = 0;
+		//	free(testVec);
+		//	testVec = (char *)malloc(sizeof(char));
 			fprintf(veri,"//////////////////////////////////////////////////****************************************PATH%d*****************************************//////////////\n",path);
 			//printf("//////////////////////////////////////////////////****************************************PATH%d*****************************************//////////////\n",path);
 			
@@ -1020,6 +1027,7 @@ YY_RULE_SETUP
 				
 				if (testVectorIndex>0)
 				{
+
 					fprintf(auxil,"wire [%d:0] testVector%d /*synthesis keep*/ ; \n",testVectorIndex-1,path-1);
 					fprintf(auxil,"assign testVector%d = %d\'b",path-1,testVectorIndex);
 					for (i=0;i<testVectorIndex;i++)
@@ -1031,7 +1039,8 @@ YY_RULE_SETUP
 				}
 				//printf("%d\n",node);
 			}
-
+		free(testVec);
+		testVec = (char *)malloc(sizeof(char));
 		node=0;
 		testVectorIndex = 0;
 
@@ -1042,7 +1051,7 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 266 "location_new.l"
+#line 275 "location_new.l"
 {
 							if (routingBefore == 1)
 							{
@@ -1112,7 +1121,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 335 "location_new.l"
+#line 344 "location_new.l"
 {	
 													if (startRoute==1)
 													{
@@ -1142,21 +1151,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 362 "location_new.l"
+#line 371 "location_new.l"
 ;
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 363 "location_new.l"
+#line 372 "location_new.l"
 ;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 364 "location_new.l"
+#line 373 "location_new.l"
 ECHO;
 	YY_BREAK
-#line 1160 "lex.yy.c"
+#line 1169 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2151,7 +2160,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 364 "location_new.l"
+#line 373 "location_new.l"
 
 
 
@@ -2170,6 +2179,7 @@ loCon = fopen("../fils/locationConstraint", "w");
 roCon = fopen("../fils/routingConstraint", "w");
 veri = fopen("../fils/verilo", "w");
 auxil = fopen("../fils/auxill", "w");
+meta = fopen("../fils/meta", "w");
   yylex();
 
 				fprintf(auxil,"reg PATH%dNODE%d, PATH%dNODE%d /* synthesis noprune*/;\nwire ",path,0,path,node-1);
