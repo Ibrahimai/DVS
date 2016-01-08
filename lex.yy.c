@@ -844,6 +844,10 @@ YY_RULE_SETUP
 											
 						}
 						fprintf(meta,"FF d q\n");
+						if (yytext[2]==yytext[3]) // same transition
+							fprintf(meta,"Non-Inv\n");
+						else
+							fprintf(meta,"Inv\n");
 						goto done1;
 					}
 
@@ -862,6 +866,12 @@ YY_RULE_SETUP
 		
 							
 					fprintf(meta,"LUT %d %d\n", port, portOut);
+					// write the non/inverting behaviour of the signal to the meta file
+					if (yytext[2]==yytext[3]) // same transition
+							fprintf(meta,"Non-Inv\n");
+						else
+							fprintf(meta,"Inv\n");
+					
 					if (port < Cin)
 					{
 
@@ -1007,7 +1017,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 235 "location_new.l"
+#line 245 "location_new.l"
 {	fprintf(loCon,"PATH%d\n",path+1);
 			fprintf(meta,"PATH%d\n",path+1);
 			path++; carryChainNum = 0;
@@ -1051,7 +1061,7 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 275 "location_new.l"
+#line 285 "location_new.l"
 {
 							if (routingBefore == 1)
 							{
@@ -1121,7 +1131,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 344 "location_new.l"
+#line 354 "location_new.l"
 {	
 													if (startRoute==1)
 													{
@@ -1151,21 +1161,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 371 "location_new.l"
+#line 381 "location_new.l"
 ;
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 372 "location_new.l"
+#line 382 "location_new.l"
 ;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 373 "location_new.l"
+#line 383 "location_new.l"
 ECHO;
 	YY_BREAK
-#line 1169 "lex.yy.c"
+#line 1179 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2160,7 +2170,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 373 "location_new.l"
+#line 383 "location_new.l"
 
 
 

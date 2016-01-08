@@ -72,6 +72,10 @@ int carryChainNum = 0;
 											
 						}
 						fprintf(meta,"FF d q\n");
+						if (yytext[2]==yytext[3]) // same transition
+							fprintf(meta,"Non-Inv\n");
+						else
+							fprintf(meta,"Inv\n");
 						goto done1;
 					}
 
@@ -90,6 +94,12 @@ int carryChainNum = 0;
 		
 							
 					fprintf(meta,"LUT %d %d\n", port, portOut);
+					// write the non/inverting behaviour of the signal to the meta file
+					if (yytext[2]==yytext[3]) // same transition
+							fprintf(meta,"Non-Inv\n");
+						else
+							fprintf(meta,"Inv\n");
+					
 					if (port < Cin)
 					{
 
